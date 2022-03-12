@@ -26,7 +26,7 @@ jobs:
       - name: Deploy Artifact
         run: |
           pkill -f "java -jar $(ls)"
-          nohup java -jar $(ls) > nohuo.log &
+          nohup java -jar $(ls) > ../nohuo.log &
 
       - name: Save artifact
         uses: actions/upload-artifact@v2
