@@ -22,8 +22,8 @@ jobs:
           pwd
           mvn -B package --file pom.xml
           mkdir artifacts && cp target/*.jar artifacts
-          pwd
           cd artifacts && ls
+          pwd
       - name: Deploy Artifact
         run: |
           pwd
