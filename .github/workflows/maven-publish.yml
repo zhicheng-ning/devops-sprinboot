@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, web-server]
+    runs-on: [ self-hosted, web-server ]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8
