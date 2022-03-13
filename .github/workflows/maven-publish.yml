@@ -28,7 +28,7 @@ jobs:
           pwd
           cd artifacts && ls
           pwd
-          nohup java -jar $(ls) > ../nohup.log &
+          nohup java -jar devops-sprinboot-0.0.1-SNAPSHOT.jar > ../nohup.log &
 
       - name: Save artifact
         uses: actions/upload-artifact@v2
