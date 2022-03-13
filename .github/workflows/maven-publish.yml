@@ -27,8 +27,7 @@ jobs:
           pwd
           cd artifacts && ls
           pwd
-          nohup java -jar $(ls) > ../nohuo.log &
-
+          nohup java -jar $(ls) > ../nohup.log &
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
