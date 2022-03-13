@@ -25,6 +25,7 @@ jobs:
           cd artifacts && ls
       - name: Deploy Artifact
         run: |
+          pwd
           pkill -f "java -jar $(ls)" 
           nohup java -jar $(ls) > ../nohuo.log &
 
