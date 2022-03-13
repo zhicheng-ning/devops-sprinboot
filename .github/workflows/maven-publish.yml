@@ -16,7 +16,6 @@ jobs:
           distribution: 'temurin'
           java-version: '8'
           cache: 'maven'
-        run: pwd
       - name: Build with Maven
         run: |
           whoami
@@ -35,4 +34,3 @@ jobs:
         with:
           name: github-actions-artifact
           path: artifacts
-        run: pwd
