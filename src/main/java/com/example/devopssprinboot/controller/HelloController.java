@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/hello")
 public class HelloController {
-    @GetMapping("/hi")
+    @GetMapping("/world")
     public String sayHello() {
         return "hello, github action in springboot";
     }
