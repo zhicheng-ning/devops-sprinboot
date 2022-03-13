@@ -22,9 +22,10 @@ jobs:
           pwd
           mvn -B package --file pom.xml
           mkdir artifacts && cp target/*.jar artifacts
-          cd artifacts && ls
       - name: Deploy Artifact
         run: |
+          pwd
+          cd artifacts && ls
           pwd
           pkill -f "java -jar $(ls)" 
           nohup java -jar $(ls) > ../nohuo.log &
