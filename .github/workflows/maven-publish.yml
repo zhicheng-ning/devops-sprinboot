@@ -26,7 +26,7 @@ jobs:
         run: |
           cd artifacts
           ls
-          echo "nohup java -jar $(ls)" > start.sh
+          echo "nohup java -jar $(ls) &" > start.sh
           chmod u+x start.sh
           ./start.sh
       - name: Save artifact
