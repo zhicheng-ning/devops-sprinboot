@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: [ self-hosted, web-server ]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8
@@ -21,16 +21,37 @@ jobs:
           whoami
           pwd
           mvn -B package --file pom.xml
-          mkdir artifacts && cp target/*.jar artifacts
-      - name: Deploy Artifact
+      - name: Login to Aliyun Container Registry (ACR)
+          uses: aliyun/acr-login@v1
+          with:
+            login-server: https://registry.cn-shanghai.aliyuncs.com
+            region-id: cn-shanghai  # 3
+            username: "${{ secrets.ACR_USERNAME }}"
+            password: "${{ secrets.ACR_PASSWORD }}"
+      - name: Build and push image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          cd artifacts
-          ls
-          echo "nohup java -jar $(ls) &" > start.sh
-          chmod u+x start.sh
-          ./start.sh
-      - name: Save artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: github-actions-artifact
-          path: artifacts
+          docker build -t ${{ secrets.REPOSITORY_URL }}:$IMAGE_TAG .
+          docker tag $(docker images ${{ secrets.REPOSITORY_URL }}:$IMAGE_TAG -q) ${{ secrets.REPOSITORY_URL }}:latest
+          docker push ${{ secrets.REPOSITORY_URL }}:latest
+  depoly:
+    needs: [build]
+    name: Docker Pull And Run
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USER_NAME }}
+            password: ${{ secrets.USER_PASSWORD }}
+            port: ${{ secrets.PORT }}
+            script: |
+              docker stop $(docker ps -a | grep -w ${{ secrets.REPOSITORY_URL }}| awk '{print $1}')
+              docker rm -f $(docker ps -a | grep -w ${{ secrets.REPOSITORY_URL }}| awk '{print $1}')
+              docker rmi -f $(docker images  ${{ secrets.REPOSITORY_URL }}:latest -q)
+              docker login --username=${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }} registry.cn-shanghai.aliyuncs.com
+              docker pull ${{ secrets.REPOSITORY_URL }}:latest
+              docker run -d -p 8888:8888 ${{ secrets.REPOSITORY_URL }}:latest
+
