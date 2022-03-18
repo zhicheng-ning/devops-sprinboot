@@ -18,4 +18,9 @@ public class HelloController {
     public String sayHello() {
         return "hello, github action in springboot";
     }
+
+    @GetMapping("/")
+    public String hi() {
+        return "项目地址：https://github.com/zhicheng-ning/devops-sprinboot";
+    }
 }
