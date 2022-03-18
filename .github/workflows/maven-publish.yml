@@ -36,22 +36,22 @@ jobs:
           docker tag $(docker images ${{ secrets.REPOSITORY_URL }}:$IMAGE_TAG -q) ${{ secrets.REPOSITORY_URL }}:latest
           docker push ${{ secrets.REPOSITORY_URL }}:latest
   depoly:
-    needs: [build]
+    needs: [ build ]
     name: Docker Pull And Run
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USER_NAME }}
-            password: ${{ secrets.USER_PASSWORD }}
-            port: ${{ secrets.PORT }}
-            script: |
-              docker stop $(docker ps -a | grep -w ${{ secrets.REPOSITORY_URL }}| awk '{print $1}')
-              docker rm -f $(docker ps -a | grep -w ${{ secrets.REPOSITORY_URL }}| awk '{print $1}')
-              docker rmi -f $(docker images  ${{ secrets.REPOSITORY_URL }}:latest -q)
-              docker login --username=${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }} registry.cn-shanghai.aliyuncs.com
-              docker pull ${{ secrets.REPOSITORY_URL }}:latest
-              docker run -d -p 8888:8888 ${{ secrets.REPOSITORY_URL }}:latest
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          password: ${{ secrets.USER_PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            docker stop $(docker ps -a | grep -w ${{ secrets.REPOSITORY_URL }}| awk '{print $1}')
+            docker rm -f $(docker ps -a | grep -w ${{ secrets.REPOSITORY_URL }}| awk '{print $1}')
+            docker rmi -f $(docker images  ${{ secrets.REPOSITORY_URL }}:latest -q)
+            docker login --username=${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }} registry.cn-shanghai.aliyuncs.com
+            docker pull ${{ secrets.REPOSITORY_URL }}:latest
+            docker run -d -p 8888:8888 ${{ secrets.REPOSITORY_URL }}:latest
 
